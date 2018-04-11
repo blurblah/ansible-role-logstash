@@ -1,0 +1,30 @@
+---
+- import_tasks: check_system.yml
+
+- name: Create configuration directories
+  shell: |
+    mkdir -p /usr/share/logstash/pipeline
+    mkdir -p /usr/share/logstash/config
+
+- name: Create default configuration files for logstash
+  template:
+    src: '{{ item.filename }}'
+    dest: '{{ item.destdir }}/{{ item.filename.split(".")[:-1] | join(".") }}'
+  with_items:
+    - { filename: 'logstash.yml.j2', destdir: '/usr/share/logstash/config' }
+    - { filename: '01-beats-input.conf.j2', destdir: '/usr/share/logstash/pipeline' }
+    - { filename: '10-syslog-filter.conf.j2', destdir: '/usr/share/logstash/pipeline' }
+    - { filename: '30-elastic-output.conf.j2', destdir: '/usr/share/logstash/pipeline' }
+
+- name: 'Run logstash docker container version {{ version }}'
+  docker_container:
+    name: logstash
+    image: 'docker.elastic.co/logstash/logstash-oss:{{ version }}'
+    ports:
+      - '{{ logstash_input_port }}:5044'
+      - '{{ http_port }}:9600'
+    volumes:
+      - /usr/share/logstash/pipeline:/usr/share/logstash/pipeline
+      - /usr/share/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+    recreate: yes
+    restart_policy: unless-stopped
