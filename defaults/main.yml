@@ -6,3 +6,4 @@ client_inactivity_timeout: 60
 es:
   host: '{{ ansible_default_ipv4.address }}'
   port: 9200
+logstash_loglevel: info
