@@ -13,6 +13,7 @@ This sample playbook installs logstash.
 
 * **http_port (optional)** : default is 9600
 * **logstash_input_port (optional)** : default is 5044
+* **logstash_loglevel (optional)** : default is info
 * **client_inactivity_timeout (optional)** : default is 60 (secs)
 * **es.host (optional)** : default is the host ip to be installed logstash
 * **es.port (optional)** : default is 9200
@@ -23,4 +24,5 @@ This sample playbook installs logstash.
   become: yes
   roles:
     - role: logstash
+      logstash_loglevel: debug
 ```
