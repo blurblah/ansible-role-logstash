@@ -1,9 +1,17 @@
 output {
-    elasticsearch {
-        hosts => ["{{ es.host }}:{{ es.port }}"]
-        sniffing => true
-        manage_template => false
-        index => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
-        document_type => "%{[@metadata][type]}"
+    if [fileset][module] {
+        elasticsearch {
+            hosts => ["{{ es.host }}:{{ es.port }}"]
+            sniffing => true
+            manage_template => false
+            index => "%{[@metadata][beat]}-%{[fileset][module]}-%{+YYYY.MM.dd}"
+        }
+    } else {
+        elasticsearch {
+            hosts => ["{{ es.host }}:{{ es.port }}"]
+            sniffing => true
+            manage_template => false
+            index => "%{[@metadata][beat]}-default-%{+YYYY.MM.dd}"
+        }
     }
 }

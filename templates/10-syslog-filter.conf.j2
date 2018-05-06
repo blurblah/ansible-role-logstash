@@ -1,11 +1,10 @@
 filter {
-    if [type] == "syslog" {
+    if [fields][document_type] == "syslog" {
         grok {
             match => {
-                "message" => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}"
+                "message" => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}"
             }
             add_field => [ "received_at", "%{@timestamp}" ]
-            add_field => [ "received_from", "%{host}" ]
         }
         syslog_pri { }
         if [fields][timezone] {

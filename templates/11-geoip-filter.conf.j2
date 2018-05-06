@@ -1,0 +1,7 @@
+filter {
+  if [@metadata][beat] == "packetbeat" and [client_ip] and [client_ip] !~ /^10\./ {
+    geoip {
+      source => "client_ip"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+filter {
+    if [fields][document_type] == "confluence" {
+        grok {
+            match => {
+                "message" => "%{MONTHDAY:monthday}-%{MONTH:month}-%{YEAR:year} %{TIME:time} %{LOGLEVEL:loglevel} \[%{PROG:thread}.*\] %{GREEDYDATA:confluence_message}"
+            }
+            add_field => [ "confluence_timestamp", "%{monthday}-%{month}-%{year} %{time}"]
+            add_field => [ "received_at", "%{@timestamp}" ]
+        }
+        date {
+            match => [ "confluence_timestamp", "dd-MMM-yyyy HH:mm:ss.SSS" ]
+            remove_field => [ "confluence_timestamp" ]
+        }
+    }
+}
