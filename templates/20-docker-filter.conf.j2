@@ -1,0 +1,12 @@
+filter {
+    if [fields][document_type] == "docker" {
+        mutate {
+            convert => { "time" => "string" }
+            add_field => [ "received_at", "%{@timestamp}" ]
+        }
+        date {
+            match => [ "time", "ISO8601" ]
+            remove_field => "time"
+        }
+    }
+}
